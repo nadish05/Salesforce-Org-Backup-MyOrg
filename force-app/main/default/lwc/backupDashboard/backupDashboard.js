@@ -4,6 +4,9 @@ from 'lwc';
 import startBackup
 from '@salesforce/apex/BackupController.startBackup';
 
+import getLogs
+from '@salesforce/apex/BackupController.getLogs';
+
 import { ShowToastEvent }
 from 'lightning/platformShowToastEvent';
 
@@ -21,7 +24,7 @@ extends LightningElement {
     @track loading = false;
 
     @track currentStep =
-        'Waiting to start backup...';
+        'Waiting to start backup';
 
     @track logs = [];
 
@@ -30,8 +33,12 @@ extends LightningElement {
     @track connectedOrg =
         '';
 
+    @track jobId = '';
+
+    pollingInterval;
+
     // =====================================
-    // Handle Repo
+    // Handle Repo URL
     // =====================================
 
     handleRepoChange(event) {
@@ -42,7 +49,7 @@ extends LightningElement {
     }
 
     // =====================================
-    // Handle Session
+    // Handle Session ID
     // =====================================
 
     handleSessionChange(event) {
@@ -68,8 +75,11 @@ extends LightningElement {
     connectSalesforce() {
 
         window.open(
+
             'https://salesforce-backup-backend-1.onrender.com/auth/salesforce',
+
             '_blank'
+
         );
 
     }
@@ -87,9 +97,13 @@ extends LightningElement {
         if (!this.repoUrl) {
 
             this.showToast(
+
                 'Error',
+
                 'Please enter GitHub Repository URL',
+
                 'error'
+
             );
 
             return;
@@ -99,34 +113,34 @@ extends LightningElement {
         if (!this.sessionId) {
 
             this.showToast(
+
                 'Error',
+
                 'Please enter Session ID',
+
                 'error'
+
             );
 
             return;
 
         }
 
-        // =====================================
-        // UI Reset
-        // =====================================
-
-        this.loading = true;
-
-        this.logs = [];
-
-        this.currentStep =
-            'Starting Backup...';
-
-        this.addLog(
-            'Backup job initialized'
-        );
-
         try {
 
             // =====================================
-            // Call Apex
+            // Reset UI
+            // =====================================
+
+            this.loading = true;
+
+            this.logs = [];
+
+            this.currentStep =
+                'Starting backup job...';
+
+            // =====================================
+            // Start Backup
             // =====================================
 
             const result =
@@ -146,71 +160,129 @@ extends LightningElement {
             console.log(response);
 
             // =====================================
-            // Update UI
+            // Store Job ID
             // =====================================
 
-            this.currentStep =
-                'Backup Started Successfully';
-
-            this.addLog(
-                'Salesforce connection verified'
-            );
-
-            this.addLog(
-                'Repository validated'
-            );
-
-            this.addLog(
-                'Metadata retrieval started'
-            );
-
-            this.addLog(
-                'Git push started'
-            );
+            this.jobId =
+                response.jobId;
 
             // =====================================
-            // Success Toast
+            // Start Polling
+            // =====================================
+
+            this.startPolling();
+
+            // =====================================
+            // Toast
             // =====================================
 
             this.showToast(
+
                 'Success',
+
                 'Backup Started Successfully',
+
                 'success'
+
             );
 
         } catch (error) {
 
             console.error(error);
 
+            this.loading = false;
+
             this.currentStep =
                 'Backup Failed';
 
-            this.addLog(
-                'Error occurred during backup'
-            );
-
             this.showToast(
+
                 'Error',
+
                 'Backup Failed',
+
                 'error'
+
             );
 
         }
 
-        this.loading = false;
-
     }
 
     // =====================================
-    // Add Logs
+    // Start Polling Logs
     // =====================================
 
-    addLog(message) {
+    startPolling() {
 
-        this.logs = [
-            ...this.logs,
-            message
-        ];
+        this.pollingInterval =
+
+            setInterval(async () => {
+
+                try {
+
+                    const result =
+                        await getLogs({
+
+                            jobId:
+                                this.jobId
+
+                        });
+
+                    const response =
+                        JSON.parse(result);
+
+                    this.logs =
+                        response.logs;
+
+                    // =================================
+                    // Detect Completion
+                    // =================================
+
+                    const finalLog =
+                        response.logs[
+                            response.logs.length - 1
+                        ];
+
+                    if (
+
+                        finalLog &&
+                        (
+                            finalLog.includes(
+                                'Backup completed successfully'
+                            ) ||
+
+                            finalLog.includes(
+                                'ERROR'
+                            )
+                        )
+
+                    ) {
+
+                        clearInterval(
+                            this.pollingInterval
+                        );
+
+                        this.loading = false;
+
+                        this.currentStep =
+                            'Backup Finished';
+
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    clearInterval(
+                        this.pollingInterval
+                    );
+
+                    this.loading = false;
+
+                }
+
+            }, 3000);
 
     }
 
@@ -219,9 +291,11 @@ extends LightningElement {
     // =====================================
 
     showToast(
+
         title,
         message,
         variant
+
     ) {
 
         this.dispatchEvent(

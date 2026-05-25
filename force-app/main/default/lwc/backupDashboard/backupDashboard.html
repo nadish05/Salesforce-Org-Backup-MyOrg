@@ -1,19 +1,13 @@
 <template>
 
-    <!-- ===================================== -->
-    <!-- Main Card -->
-    <!-- ===================================== -->
-
     <lightning-card
         title="Salesforce Metadata Backup Platform"
         icon-name="standard:knowledge"
     >
 
-        <div class="slds-p-around_medium">
+        <div class="container">
 
-            <!-- ===================================== -->
             <!-- Salesforce Connection -->
-            <!-- ===================================== -->
 
             <div class="section">
 
@@ -25,13 +19,15 @@
 
                     <div class="status success">
 
-                        🟢 Connected Successfully
+                        Connected Successfully
 
                     </div>
 
-                    <p class="org-info">
+                    <div class="org-info">
+
                         {connectedOrg}
-                    </p>
+
+                    </div>
 
                 </template>
 
@@ -39,60 +35,69 @@
 
                     <div class="status warning">
 
-                        🔴 Not Connected
+                        Salesforce Not Connected
 
                     </div>
 
                 </template>
 
                 <lightning-button
+
                     label="Connect Salesforce"
+
                     variant="brand"
+
                     onclick={connectSalesforce}
-                    class="slds-m-top_small"
+
+                    class="top-button"
+
                 >
                 </lightning-button>
 
             </div>
 
-            <!-- ===================================== -->
             <!-- Session ID -->
-            <!-- ===================================== -->
 
             <div class="section">
 
                 <lightning-input
+
                     label="Session ID"
+
                     value={sessionId}
+
                     onchange={handleSessionChange}
+
                 >
                 </lightning-input>
 
             </div>
 
-            <!-- ===================================== -->
             <!-- GitHub Repo -->
-            <!-- ===================================== -->
 
             <div class="section">
 
                 <lightning-input
+
                     label="GitHub Repository URL"
+
                     value={repoUrl}
+
                     onchange={handleRepoChange}
+
                 >
                 </lightning-input>
 
             </div>
 
-            <!-- ===================================== -->
             <!-- Status -->
-            <!-- ===================================== -->
 
             <div class="section">
 
                 <h2 class="section-title">
+
                     Backup Status
+
                 </h2>
 
                 <div class="status-box">
@@ -103,14 +108,14 @@
 
             </div>
 
-            <!-- ===================================== -->
             <!-- Logs -->
-            <!-- ===================================== -->
 
             <div class="section">
 
                 <h2 class="section-title">
-                    Logs
+
+                    Live Logs
+
                 </h2>
 
                 <div class="log-box">
@@ -120,9 +125,14 @@
                         for:item="log"
                     >
 
-                        <p key={log}>
+                        <div
+                            key={log}
+                            class="log-line"
+                        >
+
                             {log}
-                        </p>
+
+                        </div>
 
                     </template>
 
@@ -130,31 +140,35 @@
 
             </div>
 
-            <!-- ===================================== -->
-            <!-- Button -->
-            <!-- ===================================== -->
+            <!-- Start Button -->
 
             <div class="section">
 
                 <lightning-button
+
                     label="Start Backup"
+
                     variant="success"
+
                     onclick={startBackup}
+
                     disabled={loading}
+
                 >
                 </lightning-button>
 
             </div>
 
-            <!-- ===================================== -->
             <!-- Spinner -->
-            <!-- ===================================== -->
 
             <template if:true={loading}>
 
                 <lightning-spinner
+
                     alternative-text="Loading"
+
                     size="medium"
+
                 >
                 </lightning-spinner>
 

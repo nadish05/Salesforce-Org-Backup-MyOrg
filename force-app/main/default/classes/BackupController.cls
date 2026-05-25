@@ -1,5 +1,9 @@
 public with sharing class BackupController {
 
+    // ========================================
+    // Start Backup
+    // ========================================
+
     @AuraEnabled
     public static String startBackup(
 
@@ -9,35 +13,30 @@ public with sharing class BackupController {
 
     ) {
 
-        // ========================================
-        // Validation
-        // ========================================
-
-        if (String.isBlank(repoUrl)) {
-
-            throw new AuraHandledException(
-                'Repository URL is required'
-            );
-
-        }
-
-        if (String.isBlank(sessionId)) {
-
-            throw new AuraHandledException(
-                'Session ID is required'
-            );
-
-        }
-
-        // ========================================
-        // Start Backup
-        // ========================================
-
         return BackupService.startBackup(
 
             repoUrl,
 
             sessionId
+
+        );
+
+    }
+
+    // ========================================
+    // Get Logs
+    // ========================================
+
+    @AuraEnabled
+    public static String getLogs(
+
+        String jobId
+
+    ) {
+
+        return BackupService.getLogs(
+
+            jobId
 
         );
 
