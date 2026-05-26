@@ -1,17 +1,40 @@
 public with sharing class BackupController {
 
     // ========================================
+    // Connect Salesforce
+    // ========================================
+
+    @AuraEnabled
+    public static String connectSalesforce(
+
+        String clientId,
+
+        String clientSecret,
+
+        String environment
+
+    ) {
+
+        return BackupService.connectSalesforce(
+
+            clientId,
+
+            clientSecret,
+
+            environment
+
+        );
+
+    }
+
+    // ========================================
     // Start Backup
     // ========================================
 
     @AuraEnabled
     public static String startBackup(
 
-        String clientId,
-
-        String clientSecret,
-
-        String environment,
+        String sessionId,
 
         String repoUrl
 
@@ -19,11 +42,7 @@ public with sharing class BackupController {
 
         return BackupService.startBackup(
 
-            clientId,
-
-            clientSecret,
-
-            environment,
+            sessionId,
 
             repoUrl
 

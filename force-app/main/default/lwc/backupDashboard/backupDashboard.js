@@ -1,6 +1,9 @@
 import { LightningElement, track }
 from 'lwc';
 
+import connectSalesforce
+from '@salesforce/apex/BackupController.connectSalesforce';
+
 import startBackup
 from '@salesforce/apex/BackupController.startBackup';
 
@@ -27,6 +30,10 @@ extends LightningElement {
 
     @track loading = false;
 
+    @track isConnected = false;
+
+    @track sessionId = '';
+
     @track currentStep =
         'Waiting to start backup';
 
@@ -37,42 +44,141 @@ extends LightningElement {
     pollingInterval;
 
     // =====================================
-// Auto Detect Job ID From URL
-// =====================================
+    // Connected Callback
+    // =====================================
 
-connectedCallback() {
+    connectedCallback() {
 
-    const urlParams =
+        // =================================
+        // Restore Browser Session
+        // =================================
 
-        new URLSearchParams(
+        const storedConnected =
 
-            window.location.search
+            sessionStorage.getItem(
+                'sfBackupConnected'
+            );
 
-        );
+        const storedSessionId =
 
-    const jobId =
+            sessionStorage.getItem(
+                'sfBackupSessionId'
+            );
 
-        urlParams.get('jobId');
+        if (
 
-    if (jobId) {
+            storedConnected === 'true' &&
 
-        console.log(
-            'Job ID Found:',
-            jobId
-        );
+            storedSessionId
 
-        this.jobId = jobId;
+        ) {
 
-        this.loading = true;
+            this.isConnected = true;
 
-        this.currentStep =
-            'Backup in progress...';
+            this.sessionId =
+                storedSessionId;
 
-        this.startPolling();
+            this.currentStep =
+                'Salesforce Org Connected';
+
+        }
+
+        // =================================
+        // Read Hash Params
+        // =================================
+
+        const hash =
+
+            window.location.hash.substring(1);
+
+        const urlParams =
+
+            new URLSearchParams(hash);
+
+        // =================================
+        // Connected State
+        // =================================
+
+        const connected =
+
+            urlParams.get('connected');
+
+        const sessionId =
+
+            urlParams.get('sessionId');
+
+        if (
+
+            connected === 'true' &&
+
+            sessionId
+
+        ) {
+
+            this.isConnected = true;
+
+            this.sessionId =
+                sessionId;
+
+            this.loading = false;
+
+            this.currentStep =
+                'Salesforce Org Connected';
+
+            // =================================
+            // Store Session In Browser
+            // =================================
+
+            sessionStorage.setItem(
+
+                'sfBackupConnected',
+
+                'true'
+
+            );
+
+            sessionStorage.setItem(
+
+                'sfBackupSessionId',
+
+                sessionId
+
+            );
+
+            this.showToast(
+
+                'Success',
+
+                'Salesforce Connected Successfully',
+
+                'success'
+
+            );
+
+        }
+
+        // =================================
+        // Job ID Detection
+        // =================================
+
+        const jobId =
+
+            urlParams.get('jobId');
+
+        if (jobId) {
+
+            this.jobId = jobId;
+
+            this.loading = true;
+
+            this.currentStep =
+                'Backup in progress...';
+
+            this.startPolling();
+
+        }
 
     }
-
-}
 
     // =====================================
     // Environment Options
@@ -83,13 +189,19 @@ connectedCallback() {
         return [
 
             {
-                label: 'Production / Developer',
-                value: 'production'
+                label:
+                    'Production / Developer',
+
+                value:
+                    'production'
             },
 
             {
-                label: 'Sandbox',
-                value: 'sandbox'
+                label:
+                    'Sandbox',
+
+                value:
+                    'sandbox'
             }
 
         ];
@@ -141,14 +253,14 @@ connectedCallback() {
     }
 
     // =====================================
-    // Start Backup
+    // Connect Salesforce
     // =====================================
 
-    async startBackup() {
+    async connectSalesforce() {
 
-        // =====================================
+        // =================================
         // Validation
-        // =====================================
+        // =================================
 
         if (!this.clientId) {
 
@@ -182,6 +294,122 @@ connectedCallback() {
 
         }
 
+        try {
+
+            this.loading = true;
+
+            this.currentStep =
+                'Connecting Salesforce Org...';
+
+            // =================================
+            // Connect Salesforce
+            // =================================
+
+            const result =
+                await connectSalesforce({
+
+                    clientId:
+                        this.clientId,
+
+                    clientSecret:
+                        this.clientSecret,
+
+                    environment:
+                        this.environment
+
+                });
+
+            const response =
+                JSON.parse(result);
+
+            console.log(
+                'Connect Response:',
+                response
+            );
+
+            // =================================
+            // Redirect To OAuth
+            // =================================
+
+            if (
+
+                response.success &&
+
+                response.authUrl
+
+            ) {
+
+                window.location.href =
+                    response.authUrl;
+
+            } else {
+
+                this.loading = false;
+
+                this.showToast(
+
+                    'Error',
+
+                    response.message ||
+
+                    'Failed to connect Salesforce',
+
+                    'error'
+
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            this.loading = false;
+
+            this.showToast(
+
+                'Error',
+
+                'Salesforce Connection Failed',
+
+                'error'
+
+            );
+
+        }
+
+    }
+
+    // =====================================
+    // Start Backup
+    // =====================================
+
+    async startBackup() {
+
+        // =================================
+        // Connection Validation
+        // =================================
+
+        if (!this.isConnected) {
+
+            this.showToast(
+
+                'Error',
+
+                'Connect Salesforce First',
+
+                'error'
+
+            );
+
+            return;
+
+        }
+
+        // =================================
+        // Repo Validation
+        // =================================
+
         if (!this.repoUrl) {
 
             this.showToast(
@@ -200,32 +428,20 @@ connectedCallback() {
 
         try {
 
-            // =====================================
-            // Reset UI
-            // =====================================
-
             this.loading = true;
 
-            this.logs = [];
-
             this.currentStep =
-                'Generating Salesforce authorization URL...';
+                'Starting Backup...';
 
-            // =====================================
-            // Start OAuth Flow
-            // =====================================
+            // =================================
+            // Execute Backup
+            // =================================
 
             const result =
                 await startBackup({
 
-                    clientId:
-                        this.clientId,
-
-                    clientSecret:
-                        this.clientSecret,
-
-                    environment:
-                        this.environment,
+                    sessionId:
+                        this.sessionId,
 
                     repoUrl:
                         this.repoUrl
@@ -236,34 +452,35 @@ connectedCallback() {
                 JSON.parse(result);
 
             console.log(
-                'OAuth Response:',
+                'Backup Response:',
                 response
             );
 
-            // =====================================
-            // Open Salesforce Login
-            // =====================================
+            // =================================
+            // Backup Started
+            // =================================
 
             if (
 
                 response.success &&
 
-                response.authUrl
+                response.jobId
 
             ) {
 
+                this.jobId =
+                    response.jobId;
+
                 this.currentStep =
+                    'Backup in progress...';
 
-                    'Waiting for Salesforce authorization...';
-
-                window.location.href =
-                    response.authUrl;
+                this.startPolling();
 
                 this.showToast(
 
                     'Success',
 
-                    'Salesforce authorization started',
+                    'Backup Started Successfully',
 
                     'success'
 
@@ -279,7 +496,7 @@ connectedCallback() {
 
                     response.message ||
 
-                    'Failed to generate OAuth URL',
+                    'Failed to start backup',
 
                     'error'
 
@@ -289,15 +506,9 @@ connectedCallback() {
 
         } catch (error) {
 
-            console.error(
-                'Backup Error:',
-                error
-            );
+            console.error(error);
 
             this.loading = false;
-
-            this.currentStep =
-                'Backup Failed';
 
             this.showToast(
 
@@ -339,11 +550,12 @@ connectedCallback() {
                     this.logs =
                         response.logs;
 
-                    // =================================
+                    // =============================
                     // Detect Completion
-                    // =================================
+                    // =============================
 
                     const finalLog =
+
                         response.logs[
                             response.logs.length - 1
                         ];
@@ -351,14 +563,17 @@ connectedCallback() {
                     if (
 
                         finalLog &&
+
                         (
+
                             finalLog.includes(
-                                'Backup completed successfully'
+                                'completed'
                             ) ||
 
                             finalLog.includes(
                                 'ERROR'
                             )
+
                         )
 
                     ) {
@@ -376,10 +591,7 @@ connectedCallback() {
 
                 } catch (error) {
 
-                    console.error(
-                        'Polling Error:',
-                        error
-                    );
+                    console.error(error);
 
                     clearInterval(
                         this.pollingInterval
@@ -394,7 +606,7 @@ connectedCallback() {
     }
 
     // =====================================
-    // Toast
+    // Toast Helper
     // =====================================
 
     showToast(

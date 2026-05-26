@@ -1,17 +1,82 @@
 public with sharing class BackupService {
 
     // ========================================
+    // Connect Salesforce
+    // ========================================
+
+    @AuraEnabled
+    public static String connectSalesforce(
+
+        String clientId,
+
+        String clientSecret,
+
+        String environment
+
+    ) {
+
+        try {
+
+            Http http =
+                new Http();
+
+            HttpRequest request =
+                new HttpRequest();
+
+            request.setEndpoint(
+                'callout:Backup_API/connect-salesforce'
+            );
+
+            request.setMethod('POST');
+
+            request.setHeader(
+                'Content-Type',
+                'application/json'
+            );
+
+            Map<String, String> body =
+                new Map<String, String>{
+
+                    'clientId' =>
+                        clientId,
+
+                    'clientSecret' =>
+                        clientSecret,
+
+                    'environment' =>
+                        environment
+
+                };
+
+            request.setBody(
+                JSON.serialize(body)
+            );
+
+            HttpResponse response =
+                http.send(request);
+
+            return response.getBody();
+
+        } catch (Exception e) {
+
+            throw new AuraHandledException(
+
+                e.getMessage()
+
+            );
+
+        }
+
+    }
+
+    // ========================================
     // Start Backup
     // ========================================
 
     @AuraEnabled
     public static String startBackup(
 
-        String clientId,
-
-        String clientSecret,
-
-        String environment,
+        String sessionId,
 
         String repoUrl
 
@@ -26,7 +91,7 @@ public with sharing class BackupService {
                 new HttpRequest();
 
             request.setEndpoint(
-                'callout:Backup_API/start-backup'
+                'callout:Backup_API/execute-backup'
             );
 
             request.setMethod('POST');
@@ -36,72 +101,27 @@ public with sharing class BackupService {
                 'application/json'
             );
 
-            // ========================================
-            // Request Body
-            // ========================================
-
-            Map<String, String> requestBody =
+            Map<String, String> body =
                 new Map<String, String>{
 
-                    'clientId' => clientId,
+                    'sessionId' =>
+                        sessionId,
 
-                    'clientSecret' => clientSecret,
-
-                    'environment' => environment,
-
-                    'repoUrl' => repoUrl
+                    'repoUrl' =>
+                        repoUrl
 
                 };
 
             request.setBody(
-
-                JSON.serialize(requestBody)
-
+                JSON.serialize(body)
             );
-
-            // ========================================
-            // Send Request
-            // ========================================
 
             HttpResponse response =
                 http.send(request);
 
-            System.debug(
-                'STATUS CODE: ' +
-                response.getStatusCode()
-            );
-
-            System.debug(
-                'RESPONSE: ' +
-                response.getBody()
-            );
-
-            // ========================================
-            // Error Handling
-            // ========================================
-
-            if (
-
-                response.getStatusCode() >= 400
-
-            ) {
-
-                throw new AuraHandledException(
-
-                    response.getBody()
-
-                );
-
-            }
-
             return response.getBody();
 
         } catch (Exception e) {
-
-            System.debug(
-                'ERROR: ' +
-                e.getMessage()
-            );
 
             throw new AuraHandledException(
 

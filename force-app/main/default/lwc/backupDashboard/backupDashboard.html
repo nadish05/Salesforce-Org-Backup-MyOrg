@@ -44,10 +44,59 @@
                 >
                 </lightning-combobox>
 
+                <!-- ================================= -->
+                <!-- Connect Button -->
+                <!-- ================================= -->
+
+                <div class="slds-m-top_medium">
+
+                    <lightning-button
+
+                        label="Connect Salesforce"
+
+                        variant="brand"
+
+                        onclick={connectSalesforce}
+
+                        disabled={loading}
+
+                    >
+                    </lightning-button>
+
+                </div>
+
+                <!-- ================================= -->
+                <!-- Connection Status -->
+                <!-- ================================= -->
+
+                <div class="slds-m-top_medium">
+
+                    <template if:true={isConnected}>
+
+                        <div class="slds-text-color_success">
+
+                            ✅ Salesforce Org Connected
+
+                        </div>
+
+                    </template>
+
+                    <template if:false={isConnected}>
+
+                        <div class="slds-text-color_error">
+
+                            ❌ Salesforce Org Not Connected
+
+                        </div>
+
+                    </template>
+
+                </div>
+
             </div>
 
             <!-- ===================================== -->
-            <!-- GitHub Repo -->
+            <!-- GitHub Repository -->
             <!-- ===================================== -->
 
             <div class="section">
@@ -68,7 +117,28 @@
             </div>
 
             <!-- ===================================== -->
-            <!-- Status -->
+            <!-- Start Backup -->
+            <!-- ===================================== -->
+
+            <div class="section">
+
+                <lightning-button
+
+                    label="Start Backup"
+
+                    variant="success"
+
+                    onclick={startBackup}
+
+                    disabled={loading}
+
+                >
+                </lightning-button>
+
+            </div>
+
+            <!-- ===================================== -->
+            <!-- Backup Status -->
             <!-- ===================================== -->
 
             <div class="section">
@@ -88,7 +158,7 @@
             </div>
 
             <!-- ===================================== -->
-            <!-- Logs -->
+            <!-- Live Logs -->
             <!-- ===================================== -->
 
             <div class="section">
@@ -118,27 +188,6 @@
                     </template>
 
                 </div>
-
-            </div>
-
-            <!-- ===================================== -->
-            <!-- Start Button -->
-            <!-- ===================================== -->
-
-            <div class="section">
-
-                <lightning-button
-
-                    label="Start Backup"
-
-                    variant="brand"
-
-                    onclick={startBackup}
-
-                    disabled={loading}
-
-                >
-                </lightning-button>
 
             </div>
 
