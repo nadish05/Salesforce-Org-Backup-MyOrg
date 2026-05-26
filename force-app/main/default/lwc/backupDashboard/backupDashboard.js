@@ -256,13 +256,8 @@ connectedCallback() {
 
                     'Waiting for Salesforce authorization...';
 
-                window.open(
-
-                    response.authUrl,
-
-                    '_blank'
-
-                );
+                window.location.href =
+                    response.authUrl;
 
                 this.showToast(
 
