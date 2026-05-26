@@ -17,9 +17,13 @@ extends LightningElement {
     // Variables
     // =====================================
 
-    @track repoUrl = '';
+    @track clientId = '';
 
-    @track sessionId = '';
+    @track clientSecret = '';
+
+    @track environment = 'production';
+
+    @track repoUrl = '';
 
     @track loading = false;
 
@@ -28,14 +32,102 @@ extends LightningElement {
 
     @track logs = [];
 
-    @track isConnected = false;
-
-    @track connectedOrg =
-        '';
-
     @track jobId = '';
 
     pollingInterval;
+
+    // =====================================
+// Auto Detect Job ID From URL
+// =====================================
+
+connectedCallback() {
+
+    const urlParams =
+
+        new URLSearchParams(
+
+            window.location.search
+
+        );
+
+    const jobId =
+
+        urlParams.get('jobId');
+
+    if (jobId) {
+
+        console.log(
+            'Job ID Found:',
+            jobId
+        );
+
+        this.jobId = jobId;
+
+        this.loading = true;
+
+        this.currentStep =
+            'Backup in progress...';
+
+        this.startPolling();
+
+    }
+
+}
+
+    // =====================================
+    // Environment Options
+    // =====================================
+
+    get environmentOptions() {
+
+        return [
+
+            {
+                label: 'Production / Developer',
+                value: 'production'
+            },
+
+            {
+                label: 'Sandbox',
+                value: 'sandbox'
+            }
+
+        ];
+
+    }
+
+    // =====================================
+    // Handle Client ID
+    // =====================================
+
+    handleClientIdChange(event) {
+
+        this.clientId =
+            event.target.value;
+
+    }
+
+    // =====================================
+    // Handle Client Secret
+    // =====================================
+
+    handleClientSecretChange(event) {
+
+        this.clientSecret =
+            event.target.value;
+
+    }
+
+    // =====================================
+    // Handle Environment
+    // =====================================
+
+    handleEnvironmentChange(event) {
+
+        this.environment =
+            event.target.value;
+
+    }
 
     // =====================================
     // Handle Repo URL
@@ -49,42 +141,6 @@ extends LightningElement {
     }
 
     // =====================================
-    // Handle Session ID
-    // =====================================
-
-    handleSessionChange(event) {
-
-        this.sessionId =
-            event.target.value;
-
-        if (this.sessionId) {
-
-            this.isConnected = true;
-
-            this.connectedOrg =
-                'Salesforce OAuth Connected';
-
-        }
-
-    }
-
-    // =====================================
-    // Connect Salesforce
-    // =====================================
-
-    connectSalesforce() {
-
-        window.open(
-
-            'https://salesforce-backup-backend-1.onrender.com/auth/salesforce',
-
-            '_blank'
-
-        );
-
-    }
-
-    // =====================================
     // Start Backup
     // =====================================
 
@@ -94,13 +150,13 @@ extends LightningElement {
         // Validation
         // =====================================
 
-        if (!this.repoUrl) {
+        if (!this.clientId) {
 
             this.showToast(
 
                 'Error',
 
-                'Please enter GitHub Repository URL',
+                'Please enter Client ID',
 
                 'error'
 
@@ -110,13 +166,29 @@ extends LightningElement {
 
         }
 
-        if (!this.sessionId) {
+        if (!this.clientSecret) {
 
             this.showToast(
 
                 'Error',
 
-                'Please enter Session ID',
+                'Please enter Client Secret',
+
+                'error'
+
+            );
+
+            return;
+
+        }
+
+        if (!this.repoUrl) {
+
+            this.showToast(
+
+                'Error',
+
+                'Please enter Repository URL',
 
                 'error'
 
@@ -137,58 +209,95 @@ extends LightningElement {
             this.logs = [];
 
             this.currentStep =
-                'Starting backup job...';
+                'Generating Salesforce authorization URL...';
 
             // =====================================
-            // Start Backup
+            // Start OAuth Flow
             // =====================================
 
             const result =
                 await startBackup({
 
-                    repoUrl:
-                        this.repoUrl,
+                    clientId:
+                        this.clientId,
 
-                    sessionId:
-                        this.sessionId
+                    clientSecret:
+                        this.clientSecret,
+
+                    environment:
+                        this.environment,
+
+                    repoUrl:
+                        this.repoUrl
 
                 });
 
             const response =
                 JSON.parse(result);
 
-            console.log(response);
-
-            // =====================================
-            // Store Job ID
-            // =====================================
-
-            this.jobId =
-                response.jobId;
-
-            // =====================================
-            // Start Polling
-            // =====================================
-
-            this.startPolling();
-
-            // =====================================
-            // Toast
-            // =====================================
-
-            this.showToast(
-
-                'Success',
-
-                'Backup Started Successfully',
-
-                'success'
-
+            console.log(
+                'OAuth Response:',
+                response
             );
+
+            // =====================================
+            // Open Salesforce Login
+            // =====================================
+
+            if (
+
+                response.success &&
+
+                response.authUrl
+
+            ) {
+
+                this.currentStep =
+
+                    'Waiting for Salesforce authorization...';
+
+                window.open(
+
+                    response.authUrl,
+
+                    '_blank'
+
+                );
+
+                this.showToast(
+
+                    'Success',
+
+                    'Salesforce authorization started',
+
+                    'success'
+
+                );
+
+            } else {
+
+                this.loading = false;
+
+                this.showToast(
+
+                    'Error',
+
+                    response.message ||
+
+                    'Failed to generate OAuth URL',
+
+                    'error'
+
+                );
+
+            }
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                'Backup Error:',
+                error
+            );
 
             this.loading = false;
 
@@ -272,7 +381,10 @@ extends LightningElement {
 
                 } catch (error) {
 
-                    console.error(error);
+                    console.error(
+                        'Polling Error:',
+                        error
+                    );
 
                     clearInterval(
                         this.pollingInterval

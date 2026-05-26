@@ -7,90 +7,69 @@
 
         <div class="container">
 
-            <!-- Salesforce Connection -->
+            <!-- ===================================== -->
+            <!-- Salesforce Connected App -->
+            <!-- ===================================== -->
 
             <div class="section">
 
                 <h2 class="section-title">
-                    Salesforce Connection
+
+                    Salesforce Connected App
+
                 </h2>
 
-                <template if:true={isConnected}>
-
-                    <div class="status success">
-
-                        Connected Successfully
-
-                    </div>
-
-                    <div class="org-info">
-
-                        {connectedOrg}
-
-                    </div>
-
-                </template>
-
-                <template if:false={isConnected}>
-
-                    <div class="status warning">
-
-                        Salesforce Not Connected
-
-                    </div>
-
-                </template>
-
-                <lightning-button
-
-                    label="Connect Salesforce"
-
-                    variant="brand"
-
-                    onclick={connectSalesforce}
-
-                    class="top-button"
-
-                >
-                </lightning-button>
-
-            </div>
-
-            <!-- Session ID -->
-
-            <div class="section">
-
                 <lightning-input
-
-                    label="Session ID"
-
-                    value={sessionId}
-
-                    onchange={handleSessionChange}
-
+                    label="Client ID"
+                    value={clientId}
+                    onchange={handleClientIdChange}
                 >
                 </lightning-input>
 
+                <lightning-input
+                    type="password"
+                    label="Client Secret"
+                    value={clientSecret}
+                    onchange={handleClientSecretChange}
+                    class="slds-m-top_small"
+                >
+                </lightning-input>
+
+                <lightning-combobox
+                    label="Environment"
+                    value={environment}
+                    options={environmentOptions}
+                    onchange={handleEnvironmentChange}
+                    class="slds-m-top_small"
+                >
+                </lightning-combobox>
+
             </div>
 
+            <!-- ===================================== -->
             <!-- GitHub Repo -->
+            <!-- ===================================== -->
 
             <div class="section">
 
+                <h2 class="section-title">
+
+                    GitHub Repository
+
+                </h2>
+
                 <lightning-input
-
-                    label="GitHub Repository URL"
-
+                    label="Repository URL"
                     value={repoUrl}
-
                     onchange={handleRepoChange}
-
                 >
                 </lightning-input>
 
             </div>
 
+            <!-- ===================================== -->
             <!-- Status -->
+            <!-- ===================================== -->
 
             <div class="section">
 
@@ -108,7 +87,9 @@
 
             </div>
 
+            <!-- ===================================== -->
             <!-- Logs -->
+            <!-- ===================================== -->
 
             <div class="section">
 
@@ -140,7 +121,9 @@
 
             </div>
 
+            <!-- ===================================== -->
             <!-- Start Button -->
+            <!-- ===================================== -->
 
             <div class="section">
 
@@ -148,7 +131,7 @@
 
                     label="Start Backup"
 
-                    variant="success"
+                    variant="brand"
 
                     onclick={startBackup}
 
@@ -159,16 +142,15 @@
 
             </div>
 
+            <!-- ===================================== -->
             <!-- Spinner -->
+            <!-- ===================================== -->
 
             <template if:true={loading}>
 
                 <lightning-spinner
-
                     alternative-text="Loading"
-
                     size="medium"
-
                 >
                 </lightning-spinner>
 

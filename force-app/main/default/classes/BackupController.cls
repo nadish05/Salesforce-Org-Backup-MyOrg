@@ -7,17 +7,25 @@ public with sharing class BackupController {
     @AuraEnabled
     public static String startBackup(
 
-        String repoUrl,
+        String clientId,
 
-        String sessionId
+        String clientSecret,
+
+        String environment,
+
+        String repoUrl
 
     ) {
 
         return BackupService.startBackup(
 
-            repoUrl,
+            clientId,
 
-            sessionId
+            clientSecret,
+
+            environment,
+
+            repoUrl
 
         );
 

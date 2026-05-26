@@ -7,9 +7,13 @@ public with sharing class BackupService {
     @AuraEnabled
     public static String startBackup(
 
-        String repoUrl,
+        String clientId,
 
-        String sessionId
+        String clientSecret,
+
+        String environment,
+
+        String repoUrl
 
     ) {
 
@@ -32,12 +36,20 @@ public with sharing class BackupService {
                 'application/json'
             );
 
+            // ========================================
+            // Request Body
+            // ========================================
+
             Map<String, String> requestBody =
                 new Map<String, String>{
 
-                    'repoUrl' => repoUrl,
+                    'clientId' => clientId,
 
-                    'sessionId' => sessionId
+                    'clientSecret' => clientSecret,
+
+                    'environment' => environment,
+
+                    'repoUrl' => repoUrl
 
                 };
 
@@ -47,8 +59,26 @@ public with sharing class BackupService {
 
             );
 
+            // ========================================
+            // Send Request
+            // ========================================
+
             HttpResponse response =
                 http.send(request);
+
+            System.debug(
+                'STATUS CODE: ' +
+                response.getStatusCode()
+            );
+
+            System.debug(
+                'RESPONSE: ' +
+                response.getBody()
+            );
+
+            // ========================================
+            // Error Handling
+            // ========================================
 
             if (
 
@@ -68,6 +98,11 @@ public with sharing class BackupService {
 
         } catch (Exception e) {
 
+            System.debug(
+                'ERROR: ' +
+                e.getMessage()
+            );
+
             throw new AuraHandledException(
 
                 e.getMessage()
@@ -79,7 +114,7 @@ public with sharing class BackupService {
     }
 
     // ========================================
-    // Get Live Logs
+    // Get Logs
     // ========================================
 
     @AuraEnabled
