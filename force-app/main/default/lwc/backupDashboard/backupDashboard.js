@@ -298,12 +298,50 @@ extends LightningElement {
 
             this.loading = true;
 
+            // =================================
+            // Wake Render Server
+            // =================================
+
             this.currentStep =
-                'Connecting Salesforce Org...';
+                'Waking backend server...';
+
+            try {
+
+                await fetch(
+
+                    'https://salesforce-backup-backend-1.onrender.com/'
+
+                );
+
+                // Wait for cold start
+
+                await new Promise(
+
+                    resolve => setTimeout(
+
+                        resolve,
+
+                        4000
+
+                    )
+
+                );
+
+            } catch (error) {
+
+                console.error(
+                    'Wakeup Error:',
+                    error
+                );
+
+            }
 
             // =================================
-            // Connect Salesforce
+            // Connecting
             // =================================
+
+            this.currentStep =
+                'Connecting Salesforce Org...';
 
             const result =
                 await connectSalesforce({
@@ -623,7 +661,7 @@ extends LightningElement {
 
                 title,
                 message,
-                variant
+               variant
 
             })
 
