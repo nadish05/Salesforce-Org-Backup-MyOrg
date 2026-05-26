@@ -20,7 +20,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Resolution__c</field>
+                <field>Equipment__c</field>
             </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>

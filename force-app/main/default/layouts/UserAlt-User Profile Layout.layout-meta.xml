@@ -81,6 +81,14 @@
         <relatedList>RelatedFileList</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>ImageUrl</fields>
+        <fields>Definition</fields>
+        <fields>Message</fields>
+        <fields>Giver</fields>
+        <fields>Recipient</fields>
+        <relatedList>WorkBadgeRelatedList</relatedList>
+    </relatedLists>
+    <relatedLists>
         <relatedList>UserFollowersList</relatedList>
     </relatedLists>
     <relatedLists>

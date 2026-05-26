@@ -129,8 +129,16 @@
     <actionOverrides>
         <actionName>View</actionName>
         <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Experience_Instance_Record_Page</content>
+        <content>Session_Record_Page</content>
         <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Session_Record_Page</content>
+        <formFactor>Small</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
     </actionOverrides>
@@ -138,42 +146,28 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
-        <formFactor>Small</formFactor>
-        <type>Default</type>
-    </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>The Session custom object tracks specific sessions of activities offered by the resort, detailing timing, location, and capacity, to manage bookings and optimize guest participation efficiently.</description>
-    <enableActivities>false</enableActivities>
-    <enableBulkApi>false</enableBulkApi>
+    <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>false</enableHistory>
+    <enableHistory>true</enableHistory>
     <enableLicensing>false</enableLicensing>
-    <enableReports>false</enableReports>
+    <enableReports>true</enableReports>
     <enableSearch>true</enableSearch>
-    <enableSharing>false</enableSharing>
-    <enableStreamingApi>false</enableStreamingApi>
-    <externalSharingModel>Private</externalSharingModel>
-    <label>Experience Session</label>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>Read</externalSharingModel>
+    <label>Session</label>
     <nameField>
-        <displayFormat>S-{00000000}</displayFormat>
-        <label>Session Record Number</label>
+        <displayFormat>SES-{0000}</displayFormat>
+        <label>Session Name</label>
+        <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Experience Sessions</pluralLabel>
-    <searchLayouts>
-        <searchResultsAdditionalFields>Experience__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Date__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Start_Time__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>End_Time__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Booked_Slots__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Available_Slots__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Capacity__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
-    </searchLayouts>
-    <sharingModel>ReadWrite</sharingModel>
+    <pluralLabel>Sessions</pluralLabel>
+    <searchLayouts></searchLayouts>
+    <sharingModel>Read</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>
