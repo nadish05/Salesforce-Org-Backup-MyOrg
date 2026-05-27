@@ -32,6 +32,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>DataSpaceId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>OverriddenById</field>
             </layoutItems>
         </layoutColumns>
@@ -43,6 +47,10 @@
             <layoutItems>
                 <behavior>Required</behavior>
                 <field>FlowType</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>SegmentId</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

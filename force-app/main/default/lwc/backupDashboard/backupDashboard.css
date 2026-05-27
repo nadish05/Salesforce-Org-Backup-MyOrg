@@ -1,105 +1,481 @@
-.container {
+.page-bg {
 
-    padding: 20px;
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #1e293b 40%,
+            #111827 100%
+        );
+
+    padding: 1.5rem;
+
+    color: white;
 
 }
 
-.section {
+/* =========================================
+   HERO
+========================================= */
 
-    margin-bottom: 28px;
+.hero-section {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 2rem;
+
+    flex-wrap: wrap;
+
+    gap: 1rem;
 
 }
 
-.section-title {
+.hero-title {
 
-    font-size: 18px;
+    font-size: 2.5rem;
 
     font-weight: 700;
 
-    margin-bottom: 12px;
+    color: white;
+
+    margin-bottom: 0.5rem;
 
 }
 
-.status {
+.hero-subtitle {
 
-    padding: 12px;
+    color: #cbd5e1;
 
-    border-radius: 8px;
+    font-size: 1rem;
 
-    font-weight: bold;
+}
+
+/* =========================================
+   STATUS PILL
+========================================= */
+
+.connected-pill {
+
+    padding: 0.7rem 1.2rem;
+
+    border-radius: 999px;
+
+    font-weight: 600;
+
+    font-size: 0.9rem;
 
 }
 
 .success {
 
-    background: #d4edda;
+    background:
+        rgba(34, 197, 94, 0.15);
 
-    color: #155724;
+    color: #4ade80;
 
-}
-
-.warning {
-
-    background: #fff3cd;
-
-    color: #856404;
+    border:
+        1px solid rgba(74, 222, 128, 0.3);
 
 }
 
-.status-box {
+.danger {
 
-    background: #f4f6f9;
+    background:
+        rgba(239, 68, 68, 0.15);
 
-    padding: 14px;
+    color: #f87171;
 
-    border-radius: 8px;
+    border:
+        1px solid rgba(248, 113, 113, 0.3);
+
+}
+
+/* =========================================
+   GRID
+========================================= */
+
+.dashboard-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1.2fr 1fr;
+
+    gap: 1.5rem;
+
+}
+
+.left-panel,
+.right-panel {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.5rem;
+
+}
+
+/* =========================================
+   GLASS CARD
+========================================= */
+
+.glass-card {
+
+    background:
+        rgba(255,255,255,0.08);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    border-radius: 24px;
+
+    padding: 1.5rem;
+
+    backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,0.25);
+
+}
+
+.card-header h2,
+.status-header h2,
+.logs-header h2 {
+
+    font-size: 1.3rem;
+
+    font-weight: 700;
+
+    color: white;
+
+    margin-bottom: 0.4rem;
+
+}
+
+.card-header p {
+
+    color: #cbd5e1;
+
+    font-size: 0.95rem;
+
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-section {
+
+    margin-top: 1.5rem;
+
+}
+
+.custom-input {
+
+    margin-bottom: 1rem;
+
+}
+
+/* =========================================
+   LIGHTNING INPUT FIX
+========================================= */
+
+.custom-input lightning-input,
+.custom-input lightning-combobox {
+
+    --slds-c-input-color-background:
+        rgba(255,255,255,0.08);
+
+    --slds-c-input-color-border:
+        rgba(255,255,255,0.12);
+
+    --slds-c-input-radius-border:
+        14px;
+
+    --slds-c-input-text-color:
+        white;
+
+    --slds-c-input-label-text-color:
+        #e2e8f0;
+
+    --slds-c-input-shadow:
+        none;
+
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.button-row {
+
+    margin-top: 1rem;
+
+}
+
+.main-btn {
+
+    width: 100%;
+
+}
+
+/* =========================================
+   SETUP GUIDE
+========================================= */
+
+.setup-guide {
+
+    margin-top: 1.3rem;
+
+    padding: 1rem;
+
+    background:
+        rgba(255,255,255,0.04);
+
+    border:
+        1px solid rgba(255,255,255,0.06);
+
+    border-radius: 16px;
+
+}
+
+.setup-guide h3 {
+
+    color: white;
+
+    font-size: 1rem;
+
+    font-weight: 700;
+
+    margin-bottom: 0.8rem;
+
+}
+
+.setup-guide ol {
+
+    margin-left: 1rem;
+
+    color: #cbd5e1;
+
+    font-size: 0.88rem;
+
+    line-height: 1.7;
+
+}
+
+.callback-url {
+
+    color: #60a5fa;
+
+    word-break: break-all;
+
+    font-family: monospace;
+
+}
+
+/* =========================================
+   STATUS CARD
+========================================= */
+
+.status-card {
+
+    min-height: 170px;
+
+}
+
+.status-content {
+
+    margin-top: 1.5rem;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 1rem;
+
+}
+
+.status-indicator {
+
+    width: 16px;
+
+    height: 16px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 15px #22c55e;
+
+}
+
+.status-label {
+
+    color: #94a3b8;
+
+    font-size: 0.85rem;
+
+    margin-bottom: 0.3rem;
+
+}
+
+.status-text {
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    color: white;
+
+}
+
+/* =========================================
+   LOGS
+========================================= */
+
+.logs-card {
+
+    min-height: 520px;
+
+}
+
+.logs-container {
+
+    margin-top: 1rem;
+
+    background:
+        rgba(0,0,0,0.35);
+
+    border-radius: 16px;
+
+    padding: 1rem;
+
+    height: 430px;
+
+    overflow-y: auto;
+
+    border:
+        1px solid rgba(255,255,255,0.05);
+
+}
+
+.log-item {
+
+    padding: 0.7rem 0.9rem;
+
+    margin-bottom: 0.6rem;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color: #e2e8f0;
+
+    font-size: 0.88rem;
+
+    font-family: monospace;
+
+    line-height: 1.5;
+
+    border-left:
+        3px solid #3b82f6;
+
+}
+
+.empty-logs {
+
+    color: #94a3b8;
+
+    text-align: center;
+
+    margin-top: 8rem;
+
+    font-size: 0.95rem;
+
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,0.55);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 999;
+
+    backdrop-filter: blur(6px);
+
+}
+
+.loading-card {
+
+    background:
+        rgba(15,23,42,0.95);
+
+    padding: 2rem;
+
+    border-radius: 24px;
+
+    min-width: 260px;
+
+    text-align: center;
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+}
+
+.loading-text {
+
+    margin-top: 1rem;
+
+    color: #cbd5e1;
+
+    font-size: 1rem;
 
     font-weight: 600;
 
 }
 
-.log-box {
+/* =========================================
+   RESPONSIVE
+========================================= */
 
-    background: #000;
+@media screen and (max-width: 1024px) {
 
-    color: #00ff00;
+    .dashboard-grid {
 
-    min-height: 260px;
+        grid-template-columns: 1fr;
 
-    max-height: 400px;
+    }
 
-    overflow-y: auto;
+    .hero-section {
 
-    padding: 14px;
+        flex-direction: column;
 
-    border-radius: 8px;
+        align-items: flex-start;
 
-    font-family: monospace;
-
-    font-size: 13px;
-
-}
-
-.log-line {
-
-    margin-bottom: 8px;
-
-    white-space: pre-wrap;
-
-}
-
-.org-info {
-
-    margin-top: 10px;
-
-    font-size: 13px;
-
-    color: #555;
-
-}
-
-.top-button {
-
-    margin-top: 12px;
+    }
 
 }
